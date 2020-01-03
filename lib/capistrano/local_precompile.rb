@@ -28,7 +28,7 @@ namespace :deploy do
     task :prepare do
       run_locally do
         execute "bundle exec rake assets:clean RAILS_ENV=#{fetch(:precompile_env)}"
-        execute "bundle exec rake assets:precompile RAILS_ENV=#{fetch(:precompile_env)} MINIFY_ASSETS=true"
+        execute "bundle exec rake assets:precompile RAILS_ENV=#{fetch(:precompile_env)} MINIFY_ASSETS=true NODE_ENV=production"
       end
     end
 
