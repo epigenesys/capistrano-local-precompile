@@ -27,14 +27,14 @@ namespace :deploy do
     desc "Actually precompile the assets locally"
     task :prepare do
       run_locally do
-        execute "bundle exec rake assets:clean RAILS_ENV=#{fetch(:precompile_env)}"
+        execute "bundle exec rake assets:clobber RAILS_ENV=#{fetch(:precompile_env)}"
         execute "bundle exec rake assets:precompile RAILS_ENV=#{fetch(:precompile_env)} MINIFY_ASSETS=true"
       end
     end
 
     desc "Performs rsync to app servers"
     task :rsync do
-      on roles(fetch(:assets_role)) do |server|
+      on roles(fetch(:assets_role)), in: :parallel do |server|
         run_locally do
           execute "#{fetch(:rsync_cmd)} ./#{fetch(:assets_dir)}/ #{server.user}@#{server.hostname}:#{release_path}/#{fetch(:assets_dir)}/" if Dir.exists?(fetch(:assets_dir))
           execute "#{fetch(:rsync_cmd)} ./#{fetch(:packs_dir)}/ #{server.user}@#{server.hostname}:#{release_path}/#{fetch(:packs_dir)}/" if Dir.exists?(fetch(:packs_dir))
