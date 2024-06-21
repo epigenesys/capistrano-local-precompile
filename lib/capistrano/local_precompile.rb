@@ -25,8 +25,8 @@ namespace :deploy do
     desc "Actually precompile the assets locally"
     task :prepare do
       run_locally do
-        execute "bundle exec rake webpacker:clobber NODE_ENV=#{fetch(:precompile_env)}"
-        execute "bundle exec rake webpacker:compile NODE_ENV=#{fetch(:precompile_env)}"
+        execute "bundle exec rake shakapacker:clobber NODE_ENV=#{fetch(:precompile_env)}"
+        execute "bundle exec rake shakapacker:compile NODE_ENV=#{fetch(:precompile_env)}"
       end
     end
 
