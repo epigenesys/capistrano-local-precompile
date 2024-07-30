@@ -7,21 +7,11 @@ namespace :load do
 
     after "bundler:install", "deploy:assets:prepare"
     after "deploy:assets:prepare", "deploy:assets:rsync"
-    after "deploy:assets:rsync", "deploy:assets:cleanup"
   end
 end
 
 namespace :deploy do
   namespace :assets do
-    desc "Remove all local precompiled assets"
-    task :cleanup do
-      run_locally do
-        with rails_env: fetch(:precompile_env) do
-          execute "rm", "-rf", fetch(:packs_dir)
-        end
-      end
-    end
-
     desc "Actually precompile the assets locally"
     task :prepare do
       run_locally do
@@ -34,7 +24,7 @@ namespace :deploy do
     task :rsync do
       on roles(fetch(:assets_role)), in: :parallel do |server|
         run_locally do
-          execute "#{fetch(:rsync_cmd)} ./#{fetch(:packs_dir)}/ #{server.user}@#{server.hostname}:#{release_path}/#{fetch(:packs_dir)}/" if Dir.exist?(fetch(:packs_dir))
+          execute "#{fetch(:rsync_cmd)} ./#{fetch(:packs_dir)}/ #{server.user}@#{server.hostname}:#{release_path}/#{fetch(:packs_dir)}/"
         end
       end
     end
