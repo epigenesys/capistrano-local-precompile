@@ -4,9 +4,8 @@ describe Capistrano::LocalPrecompile, "integration" do
   before do
     @configuration = Capistrano::Configuration.new
     @configuration.load do
-      def rails_env; 'production'; end
+      def precompile_env; 'production'; end
       def rake; 'rake'; end
-      def asset_env; "RAILS_GROUPS=assets"; end
     end
     Capistrano::LocalPrecompile.load_into(@configuration)
   end
@@ -14,7 +13,7 @@ describe Capistrano::LocalPrecompile, "integration" do
   describe 'cleanup task' do
     it 'removes the asset files from public/assets' do
       expect(@configuration).to receive(:run_locally).
-        with('rm -rf public/assets')
+        with('rm -rf public/packs')
 
       @configuration.find_and_execute_task('deploy:assets:cleanup')
     end
@@ -23,34 +22,21 @@ describe Capistrano::LocalPrecompile, "integration" do
   describe 'prepare task' do
     it 'invokes the precompile command' do
       expect(@configuration).to receive(:run_locally).
-        with('RAILS_ENV=production RAILS_GROUPS=assets rake assets:precompile').once
+        with('NODE_ENV=production rake webpacker:compile').once
 
       @configuration.find_and_execute_task('deploy:assets:prepare')
     end
   end
 
-  describe 'remove manifest task' do
-    it 'invokes the precompile command' do
-      allow(@configuration).to receive(:shared_path).and_return('/tmp/shared')
-      allow(@configuration).to receive(:shared_assets_prefix).and_return('assets')
-
-      expect(@configuration).to receive(:run).
-        with('rm -f /tmp/shared/assets/manifest*').once
-
-      @configuration.find_and_execute_task('deploy:assets:remove_manifest')
-    end
-  end
 
   describe 'precompile task' do
     let(:servers) { %w(10.0.1.1 10.0.1.2) }
 
     before do
       allow(@configuration).to receive(:run_locally).
-        with("ls public/assets/manifest*").and_return("public/assets/manifest.yml").once
+        with('NODE_ENV=production rake webpacker:compile').once
       allow(@configuration).to receive(:run_locally).
-        with('RAILS_ENV=production RAILS_GROUPS=assets rake assets:precompile').once
-      allow(@configuration).to receive(:run_locally).
-        with('rm -rf public/assets').once
+        with('rm -rf public/packs').once
 
 
       allow(@configuration).to receive(:user).and_return('root')

@@ -27,13 +27,26 @@ Remove the following line from your `Capfile`:
 require 'capistrano/rails/assets'
 ```
 
+During local Shakapacker compilation, the gem generates a temporary copy of
+`config/shakapacker.yml` and maps the local Rails environment's configuration
+section to `precompile_env`. It passes that copy with `SHAKAPACKER_CONFIG` and
+removes it after compilation. This lets `NODE_ENV=production` use the
+production Shakapacker configuration while Rails continues to run locally in
+development.
+
 Here's the full set of configurable options:
 
 ```ruby
-set :precompile_env             # default: fetch(:rails_env) || 'production'
-set :assets_dir                 # default: "public/assets"
-set :rsync_cmd                  # default: "rsync -av --delete"
+set :precompile_env                    # default: "production"
+set :shakapacker_config                # default: "config/shakapacker.yml"
+set :shakapacker_config_environment    # default: "development"
+set :packs_dir                         # default: "public/packs"
+set :rsync_cmd                         # default: "rsync -av --delete"
+set :assets_role                       # default: "web"
 ```
+
+Set `shakapacker_config_environment` to the Rails environment used by the
+local command when it is not `development`.
 
 ## Acknowledgement
 
