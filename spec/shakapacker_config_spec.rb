@@ -20,15 +20,17 @@ describe Capistrano::LocalPrecompile::ShakapackerConfig do
             compile: false
         YAML
 
-        temporary_config = described_class.create(config_path, "development", "production")
-        copied_config = YAML.load_file(temporary_config.path, aliases: true)
+        temporary_config_path = nil
+        described_class.create(config_path, "development", "production") do |temporary_config|
+          temporary_config_path = temporary_config.path
+          copied_config = YAML.load_file(temporary_config_path, aliases: true)
+          expect(copied_config.fetch("development")).to eq(copied_config.fetch("production"))
+          expect(copied_config.fetch("development").fetch("compile")).to be(false)
+        end
         source_config = YAML.load_file(config_path, aliases: true)
 
-        expect(copied_config.fetch("development")).to eq(copied_config.fetch("production"))
-        expect(copied_config.fetch("development").fetch("compile")).to be(false)
         expect(source_config.fetch("development").fetch("compile")).to be(true)
-      ensure
-        temporary_config.close! if temporary_config
+        expect(File).not_to exist(temporary_config_path)
       end
     end
 
@@ -38,7 +40,7 @@ describe Capistrano::LocalPrecompile::ShakapackerConfig do
         File.write(config_path, "development:\n  compile: true\n")
 
         expect do
-          described_class.create(config_path, "development", "production")
+          described_class.create(config_path, "development", "production") { nil }
         end.to raise_error("Shakapacker configuration does not define \"production\"")
       end
     end

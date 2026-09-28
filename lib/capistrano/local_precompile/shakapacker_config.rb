@@ -11,16 +11,19 @@ module Capistrano
         end
         config[local_environment] = config[precompile_environment]
 
-        temporary_config = Tempfile.new(["shakapacker-", ".yml"])
-        temporary_config.write(YAML.dump(config))
-        temporary_config.close
-        temporary_config
+        Tempfile.create(["shakapacker-", ".yml"]) do |temporary_config|
+          temporary_config.write(YAML.dump(config))
+          temporary_config.flush
+          yield temporary_config
+        end
       end
 
       def self.load(config_path)
-        YAML.load_file(config_path, aliases: true)
-      rescue ArgumentError
-        YAML.load_file(config_path)
+        if YAML.respond_to?(:safe_load_file)
+          YAML.safe_load_file(config_path, aliases: true)
+        else
+          YAML.load_file(config_path)
+        end
       end
       private_class_method :load
     end
