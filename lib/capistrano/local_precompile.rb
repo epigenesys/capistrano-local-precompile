@@ -1,6 +1,11 @@
+require "shellwords"
+require_relative "local_precompile/shakapacker_config"
+
 namespace :load do
   task :defaults do
     set :precompile_env,   'production'
+    set :shakapacker_config, "config/shakapacker.yml"
+    set :shakapacker_config_environment, "development"
     set :packs_dir,        "public/packs"
     set :rsync_cmd,        "rsync -av --delete"
     set :assets_role,      "web"
@@ -15,8 +20,18 @@ namespace :deploy do
     desc "Actually precompile the assets locally"
     task :prepare do
       run_locally do
-        execute "bundle exec rake shakapacker:clobber NODE_ENV=#{fetch(:precompile_env)}"
-        execute "bundle exec rake shakapacker:compile NODE_ENV=#{fetch(:precompile_env)}"
+        precompile_env = fetch(:precompile_env).to_s
+        config_environment = fetch(:shakapacker_config_environment).to_s
+        Capistrano::LocalPrecompile::ShakapackerConfig.create(
+          fetch(:shakapacker_config), config_environment, precompile_env
+        ) do |temporary_config|
+          config_path = Shellwords.shellescape(temporary_config.path)
+          node_env = Shellwords.shellescape(precompile_env)
+          command_prefix = "SHAKAPACKER_CONFIG=#{config_path}"
+
+          execute "#{command_prefix} bundle exec rake shakapacker:clobber NODE_ENV=#{node_env}"
+          execute "#{command_prefix} bundle exec rake shakapacker:compile NODE_ENV=#{node_env}"
+        end
       end
     end
 
