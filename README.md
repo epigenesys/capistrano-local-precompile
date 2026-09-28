@@ -8,10 +8,7 @@ Add capistrano-local-precompile to your Gemfile:
 
 ```ruby
 group :development do
-  # Capistrano v2 should use '~> 0.0.5'
-  # Capistrano v3 should use '~> 1.0.0'
-  # Capistrano v3.8+ should use '~> 1.1.3'
-  gem 'capistrano-local-precompile', '~> 1.1.3', require: false
+  gem 'capistrano-local-precompile', '~> 1.1.8', require: false
 end
 ```
 
@@ -40,9 +37,6 @@ set :packs_dir                         # default: "public/packs"
 set :rsync_cmd                         # default: "rsync -av --delete"
 set :assets_role                       # default: "web"
 ```
-
-`precompile_env` is used as the local Shakapacker configuration environment,
-while `node_env` selects the Node/Shakapacker configuration to use.
 
 ## Acknowledgement
 

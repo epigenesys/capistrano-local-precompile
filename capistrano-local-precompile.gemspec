@@ -5,10 +5,10 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 Gem::Specification.new do |gem|
   gem.name        = 'capistrano-local-precompile'
   gem.version     = '1.1.8'
-  gem.homepage    = 'https://github.com/spagalloco/capistrano-local-precompile'
+  gem.homepage    = 'https://github.com/epigenesys/capistrano-local-precompile'
 
-  gem.author      = "Steve Agalloco, Tom Caflisch"
-  gem.email       = 'steve.agalloco@gmail.com, tomcaflisch@gmail.com'
+  gem.author      = "Steve Agalloco, Tom Caflisch, Shuo Chen"
+  gem.email       = 'steve.agalloco@gmail.com, tomcaflisch@gmail.com, shuo.chen@epigenesys.org.uk'
   gem.description = 'Local asset-pipeline precompilation for Capstrano'
   gem.summary     = gem.description
 
