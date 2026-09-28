@@ -8,7 +8,7 @@ Add capistrano-local-precompile to your Gemfile:
 
 ```ruby
 group :development do
-  gem 'capistrano-local-precompile', '~> 1.1.8', require: false
+  gem 'capistrano-local-precompile', require: false, github: 'epigenesys/capistrano-local-precompile'
 end
 ```
 
