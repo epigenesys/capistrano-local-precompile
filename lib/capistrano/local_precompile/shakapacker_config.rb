@@ -18,9 +18,11 @@ module Capistrano
       end
 
       def self.load(config_path)
-        YAML.load_file(config_path, aliases: true)
-      rescue ArgumentError
-        YAML.load_file(config_path)
+        if YAML.respond_to?(:safe_load_file)
+          YAML.safe_load_file(config_path, aliases: true)
+        else
+          YAML.load_file(config_path)
+        end
       end
       private_class_method :load
     end
