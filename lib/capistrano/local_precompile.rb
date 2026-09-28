@@ -1,3 +1,4 @@
+require "shellwords"
 require_relative "local_precompile/shakapacker_config"
 
 namespace :load do
@@ -24,10 +25,12 @@ namespace :deploy do
         Capistrano::LocalPrecompile::ShakapackerConfig.create(
           fetch(:shakapacker_config), config_environment, precompile_env
         ) do |temporary_config|
-          with shakapacker_config: temporary_config.path, node_env: precompile_env do
-            execute :bundle, :exec, :rake, "shakapacker:clobber"
-            execute :bundle, :exec, :rake, "shakapacker:compile"
-          end
+          config_path = Shellwords.shellescape(temporary_config.path)
+          node_env = Shellwords.shellescape(precompile_env)
+          command_prefix = "SHAKAPACKER_CONFIG=#{config_path}"
+
+          execute "#{command_prefix} bundle exec rake shakapacker:clobber NODE_ENV=#{node_env}"
+          execute "#{command_prefix} bundle exec rake shakapacker:compile NODE_ENV=#{node_env}"
         end
       end
     end
