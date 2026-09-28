@@ -30,19 +30,19 @@ require 'capistrano/rails/assets'
 Here's the full set of configurable options:
 
 ```ruby
-set :precompile_env                    # default: "production"
+set :precompile_env                    # default: "development"
+set :node_env                          # default: "production"
 set :assets_dir                         # default: "public/assets"
 set :assets_pipeline_enabled            # default: false
 set :shakapacker_enabled                # default: true
 set :shakapacker_config                # default: "config/shakapacker.yml"
-set :shakapacker_config_environment    # default: "development"
 set :packs_dir                         # default: "public/packs"
 set :rsync_cmd                         # default: "rsync -av --delete"
 set :assets_role                       # default: "web"
 ```
 
-Set `shakapacker_config_environment` to the Rails environment used by the
-local command when it is not `development`.
+`precompile_env` is used as the local Shakapacker configuration environment,
+while `node_env` selects the Node/Shakapacker configuration to use.
 
 ## Acknowledgement
 

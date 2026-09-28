@@ -6,7 +6,7 @@ require "capistrano/local_precompile/shakapacker_config"
 
 describe Capistrano::LocalPrecompile::ShakapackerConfig do
   describe ".create" do
-    it "maps the local Rails environment to the precompile environment" do
+    it "maps the local environment to the node environment" do
       Dir.mktmpdir do |directory|
         config_path = File.join(directory, "shakapacker.yml")
         File.write(config_path, <<~YAML)
@@ -32,7 +32,7 @@ describe Capistrano::LocalPrecompile::ShakapackerConfig do
       end
     end
 
-    it "raises when the precompile environment is absent" do
+    it "raises when the node environment is absent" do
       Dir.mktmpdir do |directory|
         config_path = File.join(directory, "shakapacker.yml")
         File.write(config_path, "development:\n  compile: true\n")

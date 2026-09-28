@@ -4,12 +4,12 @@ require "yaml"
 module Capistrano
   module LocalPrecompile
     class ShakapackerConfig
-      def self.create(config_path, local_environment, precompile_environment)
+      def self.create(config_path, local_environment, node_environment)
         config = load(config_path)
-        config.fetch(precompile_environment) do
-          raise "Shakapacker configuration does not define #{precompile_environment.inspect}"
+        config.fetch(node_environment) do
+          raise "Shakapacker configuration does not define #{node_environment.inspect}"
         end
-        config[local_environment] = config[precompile_environment]
+        config[local_environment] = config[node_environment]
 
         temporary_config = Tempfile.new(["shakapacker-", ".yml"])
         temporary_config.write(YAML.dump(config))

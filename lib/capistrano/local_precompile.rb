@@ -2,11 +2,11 @@ require_relative "local_precompile/shakapacker_config"
 
 namespace :load do
   task :defaults do
-    set :precompile_env,   'production'
+    set :precompile_env,   'development'
+    set :node_env,         'production'
     set :assets_pipeline_enabled, false
     set :shakapacker_enabled, true
     set :shakapacker_config, "config/shakapacker.yml"
-    set :shakapacker_config_environment, "development"
     set :assets_dir,       "public/assets"
     set :packs_dir,        "public/packs"
     set :rsync_cmd,        "rsync -av --delete"
@@ -32,15 +32,16 @@ namespace :deploy do
     task :prepare do
       run_locally do
         precompile_env = fetch(:precompile_env).to_s
+        node_env = fetch(:node_env).to_s
         assets_pipeline_enabled = fetch(:assets_pipeline_enabled)
         shakapacker_enabled = fetch(:shakapacker_enabled)
         temporary_config = nil
 
         if shakapacker_enabled
           temporary_config = Capistrano::LocalPrecompile::ShakapackerConfig.create(
-            fetch(:shakapacker_config), fetch(:shakapacker_config_environment).to_s, precompile_env
+            fetch(:shakapacker_config), precompile_env, node_env
           )
-          shakapacker_environment = "SHAKAPACKER_CONFIG=#{temporary_config.path} NODE_ENV=#{precompile_env}"
+          shakapacker_environment = "SHAKAPACKER_CONFIG=#{temporary_config.path} NODE_ENV=#{node_env}"
         end
 
         if assets_pipeline_enabled
